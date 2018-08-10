@@ -17,13 +17,12 @@ class ItemVC: UIViewController {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    var selectedCategory: Category?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
         
         fetchData()
     }
@@ -44,6 +43,7 @@ class ItemVC: UIViewController {
             newItem.title = textField.text
             newItem.done = false
             newItem.date = Date()
+            newItem.parentCategory = self.selectedCategory
             
             self.items.append(newItem)
             
@@ -187,6 +187,10 @@ extension ItemVC: UISearchBarDelegate {
 extension ItemVC {
     
     func fetchData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+        
+        request.predicate = NSPredicate(format: "parentCategory.name MATCHES %@", (self.selectedCategory!.name!))
+        
+        print(self.selectedCategory?.name ?? "")
         
         do {
             
