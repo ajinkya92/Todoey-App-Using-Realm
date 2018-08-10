@@ -145,11 +145,11 @@ extension ItemVC: UISearchBarDelegate {
         
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        fetchData(with: request)
+        fetchData(with: request, predicate: predicate)
         
     }
     
@@ -163,6 +163,7 @@ extension ItemVC: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
         
         if searchBar.text?.count == 0 {
             
@@ -186,11 +187,19 @@ extension ItemVC: UISearchBarDelegate {
 
 extension ItemVC {
     
-    func fetchData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    func fetchData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
         
-        request.predicate = NSPredicate(format: "parentCategory.name MATCHES %@", (self.selectedCategory!.name!))
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", (self.selectedCategory!.name!))
         
-        print(self.selectedCategory?.name ?? "")
+        if let additionalPredicate = predicate {
+            
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+            
+        }
+        else {
+            
+            request.predicate = categoryPredicate
+        }
         
         do {
             
