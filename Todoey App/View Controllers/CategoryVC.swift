@@ -15,6 +15,7 @@ class CategoryVC: UIViewController {
     
     var categories = [Category]()
     
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -94,6 +95,25 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
         
         self.navigationController?.pushViewController(destinationVC, animated: true)
         
+        
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            
+            context.delete(categories[indexPath.row])
+            
+            categories.remove(at: indexPath.row)
+            
+            
+            
+            saveData()
+            
+            tableView.reloadData()
+            
+            
+        }
         
     }
     

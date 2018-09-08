@@ -60,6 +60,7 @@ class ItemVC: UIViewController {
             
         }
         
+        
         alert.addTextField { (alertTextField) in
             
             alertTextField.placeholder = "Add New Item"
@@ -121,15 +122,7 @@ extension ItemVC: UITableViewDelegate, UITableViewDataSource {
             
             items.remove(at: indexPath.row)
             
-            do{
-                
-                try context.save()
-            } catch {
-                
-                print("Unable to delete data", error.localizedDescription)
-            }
-            
-            tableView.reloadData()
+            saveData()
             
         }
     }
@@ -186,6 +179,20 @@ extension ItemVC: UISearchBarDelegate {
 // Mark: - Core Data Functionality
 
 extension ItemVC {
+    
+    func saveData()  {
+        
+        do{
+            
+            try context.save()
+        } catch {
+            
+            print("Unable to delete data", error.localizedDescription)
+        }
+        
+        tableView.reloadData()
+        
+    }
     
     func fetchData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
         
